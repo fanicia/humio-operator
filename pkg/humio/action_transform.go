@@ -107,7 +107,6 @@ func CRActionFromAPIAction(action *humioapi.Action) (*humiov1alpha1.HumioAction,
 			fields[field.FieldName] = field.Value
 		}
 		ha.Spec.SlackPostMessageProperties = &humiov1alpha1.HumioActionSlackPostMessageProperties{
-			ApiToken: action.SlackPostMessageAction.ApiToken,
 			Channels: action.SlackPostMessageAction.Channels,
 			Fields:   fields,
 			UseProxy: action.SlackPostMessageAction.UseProxy,
@@ -314,7 +313,7 @@ func slackPostMessageAction(hn *humiov1alpha1.HumioAction) (*humioapi.Action, er
 		return action, err
 	}
 
-	if hn.Spec.SlackPostMessageProperties.ApiToken == "" {
+	if humiov1alpha1.HaSecrets[fmt.Sprintf("%s-%s", hn.Namespace, hn.Name)] == "" {
 		errorList = append(errorList, "property slackPostMessageProperties.apiToken is required")
 	}
 	if len(hn.Spec.SlackPostMessageProperties.Channels) == 0 {
@@ -327,7 +326,7 @@ func slackPostMessageAction(hn *humiov1alpha1.HumioAction) (*humioapi.Action, er
 		return ifErrors(action, ActionTypeSlackPostMessage, errorList)
 	}
 	action.Type = humioapi.ActionTypeSlackPostMessage
-	action.SlackPostMessageAction.ApiToken = hn.Spec.SlackPostMessageProperties.ApiToken
+	action.SlackPostMessageAction.ApiToken = humiov1alpha1.HaSecrets[fmt.Sprintf("%s-%s", hn.Namespace, hn.Name)]
 	action.SlackPostMessageAction.Channels = hn.Spec.SlackPostMessageProperties.Channels
 	action.SlackPostMessageAction.UseProxy = hn.Spec.SlackPostMessageProperties.UseProxy
 	action.SlackPostMessageAction.Fields = []humioapi.SlackFieldEntryInput{}

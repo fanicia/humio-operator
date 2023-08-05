@@ -32,6 +32,8 @@ const (
 	HumioActionStateConfigError = "ConfigError"
 )
 
+var HaSecrets map[string]string = make(map[string]string)
+
 // HumioActionWebhookProperties defines the desired state of HumioActionWebhookProperties
 type HumioActionWebhookProperties struct {
 	BodyTemplate string            `json:"bodyTemplate,omitempty"`
