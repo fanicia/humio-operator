@@ -312,8 +312,9 @@ func slackPostMessageAction(hn *humiov1alpha1.HumioAction) (*humioapi.Action, er
 	if err != nil {
 		return action, err
 	}
+	secretApiToken := humiov1alpha1.HaSecrets[fmt.Sprintf("%s-%s", hn.Namespace, hn.Name)]
 
-	if humiov1alpha1.HaSecrets[fmt.Sprintf("%s-%s", hn.Namespace, hn.Name)] == "" {
+	if secretApiToken == "" && hn.Spec.SlackPostMessageProperties.ApiToken == "" {
 		errorList = append(errorList, "property slackPostMessageProperties.apiToken is required")
 	}
 	if len(hn.Spec.SlackPostMessageProperties.Channels) == 0 {
@@ -326,7 +327,11 @@ func slackPostMessageAction(hn *humiov1alpha1.HumioAction) (*humioapi.Action, er
 		return ifErrors(action, ActionTypeSlackPostMessage, errorList)
 	}
 	action.Type = humioapi.ActionTypeSlackPostMessage
-	action.SlackPostMessageAction.ApiToken = humiov1alpha1.HaSecrets[fmt.Sprintf("%s-%s", hn.Namespace, hn.Name)]
+	action.SlackPostMessageAction.ApiToken = secretApiToken
+	// hack
+	if hn.Spec.SlackPostMessageProperties.ApiToken != "" {
+		action.SlackPostMessageAction.ApiToken = secretApiToken
+	}
 	action.SlackPostMessageAction.Channels = hn.Spec.SlackPostMessageProperties.Channels
 	action.SlackPostMessageAction.UseProxy = hn.Spec.SlackPostMessageProperties.UseProxy
 	action.SlackPostMessageAction.Fields = []humioapi.SlackFieldEntryInput{}
