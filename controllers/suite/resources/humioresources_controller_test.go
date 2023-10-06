@@ -1980,6 +1980,8 @@ var _ = Describe("Humio Resources Controllers", func() {
 			createdAction, err := humio.CRActionFromAPIAction(action)
 			Expect(err).To(BeNil())
 			Expect(createdAction.Spec.Name).To(Equal(toCreateAction.Spec.Name))
+			// Should not be setting the API token in this case
+			Expect(createdAction.Spec.SlackPostMessageProperties.ApiToken).To(Equal(""))
 		})
 
 		It("HumioAction: SlackPostMessageProperties: Should support direct api token", func() {
