@@ -328,10 +328,11 @@ func slackPostMessageAction(hn *humiov1alpha1.HumioAction) (*humioapi.Action, er
 	}
 	action.Type = humioapi.ActionTypeSlackPostMessage
 	action.SlackPostMessageAction.ApiToken = secretApiToken
-	// hack
+	// hack to prioritise the non-secret ApiToken
 	if hn.Spec.SlackPostMessageProperties.ApiToken != "" {
-		action.SlackPostMessageAction.ApiToken = secretApiToken
+		action.SlackPostMessageAction.ApiToken = hn.Spec.SlackPostMessageProperties.ApiToken
 	}
+
 	action.SlackPostMessageAction.Channels = hn.Spec.SlackPostMessageProperties.Channels
 	action.SlackPostMessageAction.UseProxy = hn.Spec.SlackPostMessageProperties.UseProxy
 	action.SlackPostMessageAction.Fields = []humioapi.SlackFieldEntryInput{}
