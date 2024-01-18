@@ -1366,6 +1366,7 @@ var _ = Describe("Humio Resources Controllers", func() {
 					return humioapi.SlackPostMessageAction{}
 				}
 				return updatedAction.SlackPostMessageAction
+				//verifiedAction has the old value.
 			}, testTimeout, suite.TestInterval).Should(BeEquivalentTo(verifiedAction.SlackPostMessageAction))
 
 			suite.UsingClusterBy(clusterKey.Name, "HumioAction: Successfully deleting it")
