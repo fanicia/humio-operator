@@ -1323,13 +1323,11 @@ var _ = Describe("Humio Resources Controllers", func() {
 			createdAction, err := humio.CRActionFromAPIAction(action)
 			Expect(err).To(BeNil())
 			Expect(createdAction.Spec.Name).To(Equal(toCreateAction.Spec.Name))
-			// Fanicia TODO: The tests should check either the ha.***.ApiToken _or_ the secretMap depending on the situation
-
-			secret, found := humiov1alpha1.HaHasSecret(createdAction)
+			// Fanicia TODO: Check the secretMap rather than the apiToken in the ha.
+			apiToken, found := humiov1alpha1.HaHasSecret(createdAction)
 			Expect(found).To(BeTrue())
-			Expect(secret).To(Equal(toCreateAction.Spec.SlackPostMessageProperties.ApiToken))
+			Expect(apiToken).To(Equal(toCreateAction.Spec.SlackPostMessageProperties.ApiToken))
 
-			// Expect(createdAction.Spec.SlackPostMessageProperties.ApiToken).To(Equal(toCreateAction.Spec.SlackPostMessageProperties.ApiToken))
 			Expect(createdAction.Spec.SlackPostMessageProperties.Channels).To(Equal(toCreateAction.Spec.SlackPostMessageProperties.Channels))
 			Expect(createdAction.Spec.SlackPostMessageProperties.Fields).To(Equal(toCreateAction.Spec.SlackPostMessageProperties.Fields))
 
@@ -2029,7 +2027,11 @@ var _ = Describe("Humio Resources Controllers", func() {
 			createdAction, err := humio.CRActionFromAPIAction(action)
 			Expect(err).To(BeNil())
 			Expect(createdAction.Spec.Name).To(Equal(toCreateAction.Spec.Name))
-			Expect(createdAction.Spec.SlackPostMessageProperties.ApiToken).To(Equal("direct-token"))
+
+			// Check the SecretMap rather than the ApiToken on the action
+			apiToken, found := humiov1alpha1.HaHasSecret(createdAction)
+			Expect(found).To(BeTrue())
+			Expect(apiToken).To(Equal(toCreateAction.Spec.SlackPostMessageProperties.ApiToken))
 		})
 	})
 
