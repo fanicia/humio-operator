@@ -328,7 +328,7 @@ func slackPostMessageAction(hn *humiov1alpha1.HumioAction) (*humioapi.Action, er
 	if len(errorList) > 0 {
 		return ifErrors(action, ActionTypeSlackPostMessage, errorList)
 	}
-	if hn.Spec.SlackPostMessageProperties.ApiToken == "" {
+	if hn.Spec.SlackPostMessageProperties.ApiToken != "" {
 		action.SlackPostMessageAction.ApiToken = hn.Spec.SlackPostMessageProperties.ApiToken
 	} else {
 		action.SlackPostMessageAction.ApiToken = apiToken
