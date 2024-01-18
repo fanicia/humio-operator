@@ -198,6 +198,12 @@ func (r *HumioActionReconciler) resolveSecrets(ctx context.Context, ha *humiov1a
 	var secretKey string
 	var secretValue string
 
+	// Fanicia TODO: debug panic to check whether we hit this path
+	// if ha.Spec.SlackPostMessageProperties.ApiToken == "updated-token" {
+	// 	str, _ := fmt.Printf("%+v", ha)
+	// 	panic(str)
+	// }
+
 	if ha.Spec.SlackPostMessageProperties != nil {
 		secretKey = fmt.Sprintf("%s-%s", ha.Namespace, ha.Name)
 		secretValue, err = r.resolveField(ctx, ha.Namespace, ha.Spec.SlackPostMessageProperties.ApiToken, ha.Spec.SlackPostMessageProperties.ApiTokenSource)

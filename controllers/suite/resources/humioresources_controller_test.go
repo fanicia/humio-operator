@@ -38,7 +38,6 @@ import (
 )
 
 var _ = Describe("Humio Resources Controllers", func() {
-
 	BeforeEach(func() {
 		// failed test runs that don't clean up leave resources behind.
 		humioClient.ClearHumioClientConnections()
@@ -231,7 +230,6 @@ var _ = Describe("Humio Resources Controllers", func() {
 				err := k8sClient.Get(ctx, key, fetchedIngestToken)
 				return k8serrors.IsNotFound(err)
 			}, testTimeout, suite.TestInterval).Should(BeTrue())
-
 		})
 
 		It("Creating ingest token pointing to non-existent managed cluster", func() {
@@ -540,7 +538,6 @@ var _ = Describe("Humio Resources Controllers", func() {
 				suite.UsingClusterBy(clusterKey.Name, fmt.Sprintf("Waiting for repo to get deleted. Current status: %#+v", fetchedRepo.Status))
 				return k8serrors.IsNotFound(err)
 			}, testTimeout, suite.TestInterval).Should(BeTrue())
-
 		})
 	})
 
@@ -640,7 +637,6 @@ var _ = Describe("Humio Resources Controllers", func() {
 				err := k8sClient.Get(ctx, key, fetchedParser)
 				return k8serrors.IsNotFound(err)
 			}, testTimeout, suite.TestInterval).Should(BeTrue())
-
 		})
 	})
 
@@ -670,7 +666,6 @@ var _ = Describe("Humio Resources Controllers", func() {
 
 			if protocol == "https" {
 				toCreateExternalCluster.Spec.CASecretName = clusterKey.Name
-
 			} else {
 				toCreateExternalCluster.Spec.Insecure = true
 			}
@@ -1328,7 +1323,13 @@ var _ = Describe("Humio Resources Controllers", func() {
 			createdAction, err := humio.CRActionFromAPIAction(action)
 			Expect(err).To(BeNil())
 			Expect(createdAction.Spec.Name).To(Equal(toCreateAction.Spec.Name))
-			Expect(createdAction.Spec.SlackPostMessageProperties.ApiToken).To(Equal(toCreateAction.Spec.SlackPostMessageProperties.ApiToken))
+			// Fanicia TODO: The tests should check either the ha.***.ApiToken _or_ the secretMap depending on the situation
+
+			secret, found := humiov1alpha1.HaHasSecret(createdAction)
+			Expect(found).To(BeTrue())
+			Expect(secret).To(Equal(toCreateAction.Spec.SlackPostMessageProperties.ApiToken))
+
+			// Expect(createdAction.Spec.SlackPostMessageProperties.ApiToken).To(Equal(toCreateAction.Spec.SlackPostMessageProperties.ApiToken))
 			Expect(createdAction.Spec.SlackPostMessageProperties.Channels).To(Equal(toCreateAction.Spec.SlackPostMessageProperties.Channels))
 			Expect(createdAction.Spec.SlackPostMessageProperties.Fields).To(Equal(toCreateAction.Spec.SlackPostMessageProperties.Fields))
 
@@ -1469,7 +1470,6 @@ var _ = Describe("Humio Resources Controllers", func() {
 				err := k8sClient.Get(ctx, key, fetchedAction)
 				return k8serrors.IsNotFound(err)
 			}, testTimeout, suite.TestInterval).Should(BeTrue())
-
 		})
 
 		It("should handle victor ops action correctly", func() {
