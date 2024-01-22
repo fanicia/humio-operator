@@ -19,8 +19,6 @@ func (r *HumioActionReconciler) reconcileHumioActionAnnotations(ctx context.Cont
 	if err != nil {
 		return reconcile.Result{}, r.logErrorAndReturn(err, "failed to add ID annotation to action")
 	}
-	// Fanicia TODO:  this should probably return the APIToken as we only use it for testing
-	// Also, make a new method for extracting the action ID
 
 	// Copy annotations from the actions transformer to get the current action ID
 	action, err := humio.CRActionFromAPIAction(addedAction)
