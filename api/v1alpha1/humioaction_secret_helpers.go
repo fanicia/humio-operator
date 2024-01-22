@@ -11,9 +11,7 @@ func HaHasSecret(hn *HumioAction) (string, bool) {
 	return "", false
 }
 
-// Fanicia TODO: Call this to set the secret. It also removes the secret from the action... which is kind of ugly
-// Note that this side effect means we cant use it in resolveFields.
-// Consider if this is the way forward or not
+// Call this to set the secret in the map
 func SecretFromHa(hn *HumioAction, token string) {
 	key := fmt.Sprintf("%s-%s", hn.Namespace, hn.Name)
 	value := token
