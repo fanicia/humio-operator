@@ -1323,7 +1323,8 @@ var _ = Describe("Humio Resources Controllers", func() {
 			createdAction, err := humio.CRActionFromAPIAction(action)
 			Expect(err).To(BeNil())
 			Expect(createdAction.Spec.Name).To(Equal(toCreateAction.Spec.Name))
-			// Fanicia TODO: Check the secretMap rather than the apiToken in the ha.
+
+			// Check the secretMap rather than the apiToken in the ha.
 			apiToken, found := humiov1alpha1.HaHasSecret(createdAction)
 			Expect(found).To(BeTrue())
 			Expect(apiToken).To(Equal(toCreateAction.Spec.SlackPostMessageProperties.ApiToken))
@@ -1364,7 +1365,6 @@ var _ = Describe("Humio Resources Controllers", func() {
 					return humioapi.SlackPostMessageAction{}
 				}
 				return updatedAction.SlackPostMessageAction
-				//verifiedAction has the old value.
 			}, testTimeout, suite.TestInterval).Should(BeEquivalentTo(verifiedAction.SlackPostMessageAction))
 
 			suite.UsingClusterBy(clusterKey.Name, "HumioAction: Successfully deleting it")
@@ -1979,8 +1979,12 @@ var _ = Describe("Humio Resources Controllers", func() {
 			createdAction, err := humio.CRActionFromAPIAction(action)
 			Expect(err).To(BeNil())
 			Expect(createdAction.Spec.Name).To(Equal(toCreateAction.Spec.Name))
-			// Should not be setting the API token in this case
+
+			// Should not be setting the API token in this case, but the secretMap should have the value
 			Expect(createdAction.Spec.SlackPostMessageProperties.ApiToken).To(Equal(""))
+			apiToken, found := humiov1alpha1.HaHasSecret(createdAction)
+			Expect(found).To(BeTrue())
+			Expect(apiToken).To(Equal(toCreateAction.Spec.SlackPostMessageProperties.ApiToken))
 		})
 
 		It("HumioAction: SlackPostMessageProperties: Should support direct api token", func() {
