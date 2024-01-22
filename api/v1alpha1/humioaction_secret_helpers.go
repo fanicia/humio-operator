@@ -14,9 +14,8 @@ func HaHasSecret(hn *HumioAction) (string, bool) {
 // Fanicia TODO: Call this to set the secret. It also removes the secret from the action... which is kind of ugly
 // Note that this side effect means we cant use it in resolveFields.
 // Consider if this is the way forward or not
-func SecretFromHa(hn *HumioAction) {
+func SecretFromHa(hn *HumioAction, token string) {
 	key := fmt.Sprintf("%s-%s", hn.Namespace, hn.Name)
-	value := hn.Spec.SlackPostMessageProperties.ApiToken
+	value := token
 	HaSecrets[key] = value
-	hn.Spec.SlackPostMessageProperties.ApiToken = ""
 }

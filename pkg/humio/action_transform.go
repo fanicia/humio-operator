@@ -107,12 +107,11 @@ func CRActionFromAPIAction(action *humioapi.Action) (*humiov1alpha1.HumioAction,
 			fields[field.FieldName] = field.Value
 		}
 		ha.Spec.SlackPostMessageProperties = &humiov1alpha1.HumioActionSlackPostMessageProperties{
-			ApiToken: action.SlackPostMessageAction.ApiToken,
 			Channels: action.SlackPostMessageAction.Channels,
 			Fields:   fields,
 			UseProxy: action.SlackPostMessageAction.UseProxy,
 		}
-		humiov1alpha1.SecretFromHa(ha)
+		humiov1alpha1.SecretFromHa(ha, action.SlackPostMessageAction.ApiToken)
 	}
 
 	if !reflect.ValueOf(action.VictorOpsAction).IsZero() {
