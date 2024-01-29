@@ -1984,7 +1984,7 @@ var _ = Describe("Humio Resources Controllers", func() {
 			Expect(createdAction.Spec.SlackPostMessageProperties.ApiToken).To(Equal(""))
 			apiToken, found := humiov1alpha1.HaHasSecret(createdAction)
 			Expect(found).To(BeTrue())
-			Expect(apiToken).To(Equal(toCreateAction.Spec.SlackPostMessageProperties.ApiToken))
+			Expect(apiToken).To(Equal("secret-token"))
 		})
 
 		It("HumioAction: SlackPostMessageProperties: Should support direct api token", func() {
